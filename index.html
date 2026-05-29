@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day Home Fitness Challenge</title>
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #2f3542;
+            --light: #f1f2f6;
+            --dark: #1e222b;
+            --success: #2ed573;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #a4b0be;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Active Workout Section */
+        .workout-display {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .media-placeholder {
+            background: #dfe4ea;
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .media-placeholder img,
+        .media-placeholder video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .exercise-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .exercise-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--light);
+            background: #fafafa;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+        }
+
+        /* 30-Day Grid Section */
+        .days-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .day-btn {
+            background: var(--light);
+            border: 2px solid transparent;
+            padding: 1rem 0;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .day-btn:hover {
+            background: #e4e7eb;
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .day-btn.rest-day {
+            background: #ced6e0;
+            color: #747d8c;
+        }
+
+        .complete-btn {
+            display: block;
+            width: 100%;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background 0.2s;
+        }
+
+        .complete-btn:hover {
+            background: #26af5f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>30-Day Home Shred</h1>
+        <p>No Equipment. No Excuses. Just Results.</p>
+    </header>
+
+    <div class="container">
+        <main class="workout-display">
+            <h2 id="workout-title">Day 1: Full Body Ignition</h2>
+            <p id="workout-desc" style="color: #57606f; margin-top: 0.5rem;">A high-energy starter to kickstart your
+                metabolism and wake up your muscles.</p>
+
+            <div class="media-placeholder" id="workout-media">
+                <p style="color: #747d8c; font-weight: bold;">[ Drop your Workout Demo GIF / Video Link Here ]</p>
+            </div>
+
+            <h3>Exercises</h3>
+            <ul class="exercise-list" id="exercise-details">
+            </ul>
+
+            <button class="complete-btn" onclick="markComplete()">Mark Day as Completed! ✓</button>
+        </main>
+
+        <aside class="days-sidebar">
+            <h2>Your Progress</h2>
+            <div class="days-grid" id="grid-container">
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        
+        // Workout Data Structure
+        const workouts = {
+            1: {
+                title: "Day 1: Full Body Ignition",
+                desc: "Focus on form and establishing a baseline rhythm.",
+                exercises: ["Jumping Jacks - 40 secs", "Bodyweight Squats - 12 reps", "Push-ups (or Knee Push-ups) - 10 reps", "Plank Hold - 30 secs"],
+                media: "Day1.gif" // Sample placeholder
+            },
+            2: {
+                title: "Day 2: Core & Cardio",
+                desc: "Burn fat and build an ironclad midsection.",
+                exercises: ["Mountain Climbers - 45 secs", "Bicycle Crunches - 15 per side", "High Knees - 30 secs", "Flutter Kicks - 40 secs"],
+                media: "Day2.gif"
+            },
+            3: {
+                title: "Day 3: Lower Body Sculpt",
+                desc: "Glute and quad focus. Power comes from the ground up.",
+                exercises: ["Reverse Lunges - 10 per leg", "Glute Bridges - 15 reps", "Sumo Squats - 12 reps", "Wall Sit - 45 secs"],
+                media: "Day3.gif"
+            },
+            4: {
+                title: "Day 4: Active Recovery",
+                desc: "Rest and stretch. Keep your body moving gently today.",
+                exercises: ["Child's Pose Stretch - 1 min", "Cat-Cow Stretch - 1 min", "Deep Breathing - 2 mins"],
+                media: "Day4.gif"
+            },
+            // Repeat structure up to Day 30...
+        };
+
+        // Generate the 30-day buttons dynamically
+        const grid = document.getElementById('grid-container');
+        let currentDay = 1;
+
+        for (let i = 1; i <= 30; i++) {
+            const btn = document.createElement('button');
+            btn.classList.add('day-btn');
+            btn.innerText = `Day ${i}`;
+            if (i % 4 === 0) btn.classList.add('rest-day'); // Every 4th day is a rest day
+            if (i === 1) btn.classList.add('active');
+
+            btn.onclick = () => loadWorkout(i);
+            btn.id = `day-${i}`;
+            grid.appendChild(btn);
+        }
+
+        function loadWorkout(dayNum) {
+            // Update Active Button Style
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`day-${dayNum}`).classList.add('active');
+
+            currentDay = dayNum;
+
+            // Handle day data fallback if not filled in the object
+            const data = workouts[dayNum] || {
+                title: `Day ${dayNum}: Progress Continuation`,
+                desc: "Keep up the amazing momentum! Perform your custom circuits.",
+                exercises: ["Custom Squat Variant - 12 reps", "Custom Core Variant - 45 secs", "Custom Upper Variant - 10 reps"],
+                media: ""
+            };
+
+            // Update DOM
+            document.getElementById('workout-title').innerText = data.title;
+            document.getElementById('workout-desc').innerText = data.desc;
+
+            // Update Media
+            const mediaBox = document.getElementById('workout-media');
+            if (data.media) {
+                mediaBox.innerHTML = `<img src="${data.media}" alt="Workout Animation">`;
+            } else {
+                mediaBox.innerHTML = `<p style="color: #747d8c; font-weight: bold;">[ Add Video/GIF for Day ${dayNum} ]</p>`;
+            }
+
+            // Update Exercises
+            const list = document.getElementById('exercise-details');
+            list.innerHTML = "";
+            data.exercises.forEach(ex => {
+                const parts = ex.split(' - ');
+                list.innerHTML += `<li class="exercise-item"><strong>${parts[0]}</strong> <span>${parts[1] || ''}</span></li>`;
+            });
+        }
+
+        function markComplete() {
+            const currentBtn = document.getElementById(`day-${currentDay}`);
+            currentBtn.style.backgroundColor = '#2ed573';
+            currentBtn.style.color = 'white';
+            alert(`Awesome job! Day ${currentDay} complete. Keep it up!`);
+        }
+
+        // Initialize first day
+        loadWorkout(1);
+    </script>
+</body>
+
+</html>
